@@ -459,40 +459,57 @@ async function startVoiceCall(
   }
 
   // Create peer connection with comprehensive STUN/TURN servers for maximum stability
-  const peer = new RTCPeerConnection({
-    iceServers: [
-      // Public STUN servers (multiple for redundancy and reliability)
-      { urls: 'stun:stun.l.google.com:19302' },
-      { urls: 'stun:stun1.l.google.com:19302' },
-      { urls: 'stun:stun2.l.google.com:19302' },
-      { urls: 'stun:stun3.l.google.com:19302' },
-      { urls: 'stun:stun4.l.google.com:19302' },
-      { urls: 'stun:stun.stunprotocol.org:3478' },
-      { urls: 'stun:stun.voiparound.com' },
-      { urls: 'stun:stun.voipbuster.com' },
-      { urls: 'stun:stun.voipstunt.com' },
-      { urls: 'stun:stun.voxgratia.org' },
-      { urls: 'stun:stun.ekiga.net' },
-      { urls: 'stun:stun.ideasip.com' },
-      { urls: 'stun:stun.schlund.de' },
-      { urls: 'stun:stun.voipgate.com' },
-      { urls: ['stun:fr-turn3.xirsys.com'] },
-      // TURN servers (Xirsys - for NAT traversal and relay when STUN fails)
-      {
-        username: '3S4jyxcSetE19BA7RnBF1KQg4G7nhkwoKiIkfNDHe9fKhz-SaS3XT3E1J2ADtD2OAAAAAGjDJ9lIYXlrOTU=',
-        credential: '77c51804-8f48-11f0-9cf6-e25abca605ee',
-        urls: [
-          'turn:fr-turn3.xirsys.com:80?transport=udp',
-          'turn:fr-turn3.xirsys.com:3478?transport=udp',
-          'turn:fr-turn3.xirsys.com:80?transport=tcp',
-          'turn:fr-turn3.xirsys.com:3478?transport=tcp',
-          'turns:fr-turn3.xirsys.com:443?transport=tcp',
-          'turns:fr-turn3.xirsys.com:5349?transport=tcp',
+
+    const peer = new RTCPeerConnection({
+        iceServers: [
+            { urls: 'stun:109.205.58.195:3478' },
+            {
+                urls: [
+                    'turn:109.205.58.195:3478?transport=udp',
+                    //'turn:109.205.58.195:3478?transport=tcp',
+                ],
+                username: 'turnuser',
+                credential: 'MyS3cretTurnPass!2025',
+            },
         ],
-      },
-    ],
-    iceCandidatePoolSize: 10, // Pre-gather more candidates for faster connection
-  });
+        iceCandidatePoolSize: 10,
+    });
+
+
+  //   const peer = new RTCPeerConnection({
+  //   iceServers: [
+  //     // Public STUN servers (multiple for redundancy and reliability)
+  //     { urls: 'stun:stun.l.google.com:19302' },
+  //     { urls: 'stun:stun1.l.google.com:19302' },
+  //     { urls: 'stun:stun2.l.google.com:19302' },
+  //     { urls: 'stun:stun3.l.google.com:19302' },
+  //     { urls: 'stun:stun4.l.google.com:19302' },
+  //     { urls: 'stun:stun.stunprotocol.org:3478' },
+  //     { urls: 'stun:stun.voiparound.com' },
+  //     { urls: 'stun:stun.voipbuster.com' },
+  //     { urls: 'stun:stun.voipstunt.com' },
+  //     { urls: 'stun:stun.voxgratia.org' },
+  //     { urls: 'stun:stun.ekiga.net' },
+  //     { urls: 'stun:stun.ideasip.com' },
+  //     { urls: 'stun:stun.schlund.de' },
+  //     { urls: 'stun:stun.voipgate.com' },
+  //     { urls: ['stun:fr-turn3.xirsys.com'] },
+  //     // TURN servers (Xirsys - for NAT traversal and relay when STUN fails)
+  //     {
+  //       username: '3S4jyxcSetE19BA7RnBF1KQg4G7nhkwoKiIkfNDHe9fKhz-SaS3XT3E1J2ADtD2OAAAAAGjDJ9lIYXlrOTU=',
+  //       credential: '77c51804-8f48-11f0-9cf6-e25abca605ee',
+  //       urls: [
+  //         'turn:fr-turn3.xirsys.com:80?transport=udp',
+  //         'turn:fr-turn3.xirsys.com:3478?transport=udp',
+  //         'turn:fr-turn3.xirsys.com:80?transport=tcp',
+  //         'turn:fr-turn3.xirsys.com:3478?transport=tcp',
+  //         'turns:fr-turn3.xirsys.com:443?transport=tcp',
+  //         'turns:fr-turn3.xirsys.com:5349?transport=tcp',
+  //       ],
+  //     },
+  //   ],
+  //   iceCandidatePoolSize: 10, // Pre-gather more candidates for faster connection
+  // });
 
   pc = peer;
 
@@ -1289,34 +1306,44 @@ export type ServerStatus = {
 export function getIceServers(): RTCIceServer[] {
   return [
     // Public STUN servers
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' },
-    { urls: 'stun:stun3.l.google.com:19302' },
-    { urls: 'stun:stun4.l.google.com:19302' },
-    { urls: 'stun:stun.stunprotocol.org:3478' },
-    { urls: 'stun:stun.voiparound.com' },
-    { urls: 'stun:stun.voipbuster.com' },
-    { urls: 'stun:stun.voipstunt.com' },
-    { urls: 'stun:stun.voxgratia.org' },
-    { urls: 'stun:stun.ekiga.net' },
-    { urls: 'stun:stun.ideasip.com' },
-    { urls: 'stun:stun.schlund.de' },
-    { urls: 'stun:stun.voipgate.com' },
-    { urls: ['stun:fr-turn3.xirsys.com'] },
+      { urls: 'stun:109.205.58.195:3478' },
+      {
+          urls: [
+              'turn:109.205.58.195:3478?transport=udp',
+              //'turn:109.205.58.195:3478?transport=tcp',
+          ],
+          username: 'turnuser',
+          credential: 'MyS3cretTurnPass!2025',
+      },
+
+    // { urls: 'stun:stun.l.google.com:19302' },
+    // { urls: 'stun:stun1.l.google.com:19302' },
+    // { urls: 'stun:stun2.l.google.com:19302' },
+    // { urls: 'stun:stun3.l.google.com:19302' },
+    // { urls: 'stun:stun4.l.google.com:19302' },
+    // { urls: 'stun:stun.stunprotocol.org:3478' },
+    // { urls: 'stun:stun.voiparound.com' },
+    // { urls: 'stun:stun.voipbuster.com' },
+    // { urls: 'stun:stun.voipstunt.com' },
+    // { urls: 'stun:stun.voxgratia.org' },
+    // { urls: 'stun:stun.ekiga.net' },
+    // { urls: 'stun:stun.ideasip.com' },
+    // { urls: 'stun:stun.schlund.de' },
+    // { urls: 'stun:stun.voipgate.com' },
+    // { urls: ['stun:fr-turn3.xirsys.com'] },
     // TURN servers
-    {
-      username: '3S4jyxcSetE19BA7RnBF1KQg4G7nhkwoKiIkfNDHe9fKhz-SaS3XT3E1J2ADtD2OAAAAAGjDJ9lIYXlrOTU=',
-      credential: '77c51804-8f48-11f0-9cf6-e25abca605ee',
-      urls: [
-        'turn:fr-turn3.xirsys.com:80?transport=udp',
-        'turn:fr-turn3.xirsys.com:3478?transport=udp',
-        'turn:fr-turn3.xirsys.com:80?transport=tcp',
-        'turn:fr-turn3.xirsys.com:3478?transport=tcp',
-        'turns:fr-turn3.xirsys.com:443?transport=tcp',
-        'turns:fr-turn3.xirsys.com:5349?transport=tcp',
-      ],
-    },
+    // {
+    //   username: '3S4jyxcSetE19BA7RnBF1KQg4G7nhkwoKiIkfNDHe9fKhz-SaS3XT3E1J2ADtD2OAAAAAGjDJ9lIYXlrOTU=',
+    //   credential: '77c51804-8f48-11f0-9cf6-e25abca605ee',
+    //   urls: [
+    //     'turn:fr-turn3.xirsys.com:80?transport=udp',
+    //     'turn:fr-turn3.xirsys.com:3478?transport=udp',
+    //     'turn:fr-turn3.xirsys.com:80?transport=tcp',
+    //     'turn:fr-turn3.xirsys.com:3478?transport=tcp',
+    //     'turns:fr-turn3.xirsys.com:443?transport=tcp',
+    //     'turns:fr-turn3.xirsys.com:5349?transport=tcp',
+    //   ],
+    // },
   ];
 }
 
