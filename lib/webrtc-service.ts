@@ -83,7 +83,7 @@ function ensureSocketConnected() {
   socket = io(BASE_URL, { transports: ['websocket'] });
 
   socket.on('connect', () => {
-    console.log('Socket connected', socket?.id);
+    // console.log('Socket connected', socket?.id);
     // Re-register device if we have one
     if (currentDeviceId) {
       if (currentLoyaltyId) {
@@ -466,10 +466,18 @@ async function startVoiceCall(
             {
                 urls: [
                     'turn:109.205.58.195:3478?transport=udp',
-                    //'turn:109.205.58.195:3478?transport=tcp',
                 ],
                 username: 'turnuser',
                 credential: 'MyS3cretTurnPass!2025',
+            },
+            { urls: 'stun:217.60.61.112:3478' },
+            {
+                urls: [
+                    'turn:217.60.61.112:3478?transport=udp',
+                    'turn:217.60.61.112:5349?transport=tcp', // TLS/TCP
+                ],
+                username: 'user', // можно любой username
+                credential: 'MySuperSecret123', // static-auth-secret с VPS
             },
         ],
         iceCandidatePoolSize: 10,
@@ -1314,6 +1322,15 @@ export function getIceServers(): RTCIceServer[] {
           ],
           username: 'turnuser',
           credential: 'MyS3cretTurnPass!2025',
+      },
+      { urls: 'stun:217.60.61.112:3478' },
+      {
+          urls: [
+              'turn:217.60.61.112:3478?transport=udp',
+              'turn:217.60.61.112:5349?transport=tcp', // TLS/TCP
+          ],
+          username: 'user', // можно любой username
+          credential: 'MySuperSecret123', // static-auth-secret с VPS
       },
 
     // { urls: 'stun:stun.l.google.com:19302' },
