@@ -1,5 +1,6 @@
 // API service for fetching users from database
 
+// const BASE_URL = 'https://server.totus.club';
 const BASE_URL = 'https://server.totus.club';
 
 export interface User {

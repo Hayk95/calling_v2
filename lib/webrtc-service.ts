@@ -460,31 +460,57 @@ async function startVoiceCall(
 
   // Create peer connection with comprehensive STUN/TURN servers for maximum stability
 
-    const peer = new RTCPeerConnection({
+    const peer: any = new RTCPeerConnection({
         iceServers: [
-            { urls: 'stun:109.205.58.195:3478' },
+            // STUN սերվերներ՝ ուղղակի կապի համար
+            { urls: "stun:stun1.totus.club:3478" },
+            { urls: "stun:stun2.totus.club:3478" },
+
+            // TURN սերվերներ՝ NAT/ֆայերվոլի դեպքում փոխանցման համար
             {
-                urls: [
-                    'turn:109.205.58.195:3478?transport=udp',
-                ],
-                username: 'turnuser',
-                credential: 'MyS3cretTurnPass!2025',
+                urls: "turn:turn1.totus.club:3478?transport=udp",
+                username: "test",
+                credential: "TotusSecretKey2026",
             },
-            { urls: 'stun:217.60.61.112:3478' },
             {
-                urls: [
-                    'turn:217.60.61.112:3478?transport=udp',
-                    'turn:217.60.61.112:5349?transport=tcp', // TLS/TCP
-                ],
-                username: 'user', // можно любой username
-                credential: 'MySuperSecret123', // static-auth-secret с VPS
+                urls: "turn:turn1.totus.club:3478?transport=tcp",
+                username: "test",
+                credential: "TotusSecretKey2026",
+            },
+            {
+                urls: "turns:turn1.totus.club:5349?transport=tcp",
+                username: "test",
+                credential: "TotusSecretKey2026",
+            },
+            {
+                urls: "turn:turn2.totus.club:3478?transport=udp",
+                username: "test",
+                credential: "TotusSecretKey2026",
+            },
+            {
+                urls: "turn:turn2.totus.club:3478?transport=tcp",
+                username: "test",
+                credential: "TotusSecretKey2026",
+            },
+            {
+                urls: "turns:turn2.totus.club:5349?transport=tcp",
+                username: "test",
+                credential: "TotusSecretKey2026",
             },
         ],
+
+        // Նախօրոք հավաքել ICE թեկնածուներ արագ կապի համար
         iceCandidatePoolSize: 10,
+
+        // Պրոֆեսիոնալ WebRTC պարամետրեր
+        iceTransportPolicy: "all",     // օգտագործել ինչպես ուղղակի (STUN), այնպես էլ ռելեյ (TURN)
+        bundlePolicy: "max-bundle",    // RTP/RTCP–ը նույն պորտով հավաքել՝ NAT–ի արդյունավետության համար
+        rtcpMuxPolicy: "require",      // պահանջել RTP/RTCP համակցումը՝ նույն պորտով
     });
 
 
-  //   const peer = new RTCPeerConnection({
+
+    //   const peer = new RTCPeerConnection({
   //   iceServers: [
   //     // Public STUN servers (multiple for redundancy and reliability)
   //     { urls: 'stun:stun.l.google.com:19302' },
@@ -1313,54 +1339,41 @@ export type ServerStatus = {
 // Get all configured ICE servers
 export function getIceServers(): RTCIceServer[] {
   return [
-    // Public STUN servers
-      { urls: 'stun:109.205.58.195:3478' },
-      {
-          urls: [
-              'turn:109.205.58.195:3478?transport=udp',
-              //'turn:109.205.58.195:3478?transport=tcp',
-          ],
-          username: 'turnuser',
-          credential: 'MyS3cretTurnPass!2025',
-      },
-      { urls: 'stun:217.60.61.112:3478' },
-      {
-          urls: [
-              'turn:217.60.61.112:3478?transport=udp',
-              'turn:217.60.61.112:5349?transport=tcp', // TLS/TCP
-          ],
-          username: 'user', // можно любой username
-          credential: 'MySuperSecret123', // static-auth-secret с VPS
-      },
+      // STUN սերվերներ՝ ուղղակի կապի համար
+      { urls: "stun:stun1.totus.club:3478" },
+      { urls: "stun:stun2.totus.club:3478" },
 
-    // { urls: 'stun:stun.l.google.com:19302' },
-    // { urls: 'stun:stun1.l.google.com:19302' },
-    // { urls: 'stun:stun2.l.google.com:19302' },
-    // { urls: 'stun:stun3.l.google.com:19302' },
-    // { urls: 'stun:stun4.l.google.com:19302' },
-    // { urls: 'stun:stun.stunprotocol.org:3478' },
-    // { urls: 'stun:stun.voiparound.com' },
-    // { urls: 'stun:stun.voipbuster.com' },
-    // { urls: 'stun:stun.voipstunt.com' },
-    // { urls: 'stun:stun.voxgratia.org' },
-    // { urls: 'stun:stun.ekiga.net' },
-    // { urls: 'stun:stun.ideasip.com' },
-    // { urls: 'stun:stun.schlund.de' },
-    // { urls: 'stun:stun.voipgate.com' },
-    // { urls: ['stun:fr-turn3.xirsys.com'] },
-    // TURN servers
-    // {
-    //   username: '3S4jyxcSetE19BA7RnBF1KQg4G7nhkwoKiIkfNDHe9fKhz-SaS3XT3E1J2ADtD2OAAAAAGjDJ9lIYXlrOTU=',
-    //   credential: '77c51804-8f48-11f0-9cf6-e25abca605ee',
-    //   urls: [
-    //     'turn:fr-turn3.xirsys.com:80?transport=udp',
-    //     'turn:fr-turn3.xirsys.com:3478?transport=udp',
-    //     'turn:fr-turn3.xirsys.com:80?transport=tcp',
-    //     'turn:fr-turn3.xirsys.com:3478?transport=tcp',
-    //     'turns:fr-turn3.xirsys.com:443?transport=tcp',
-    //     'turns:fr-turn3.xirsys.com:5349?transport=tcp',
-    //   ],
-    // },
+      // TURN սերվերներ՝ NAT/ֆայերվոլի դեպքում փոխանցման համար
+      {
+          urls: "turn:turn1.totus.club:3478?transport=udp",
+          username: "test",
+          credential: "TotusSecretKey2026",
+      },
+      {
+          urls: "turn:turn1.totus.club:3478?transport=tcp",
+          username: "test",
+          credential: "TotusSecretKey2026",
+      },
+      {
+          urls: "turns:turn1.totus.club:5349?transport=tcp",
+          username: "test",
+          credential: "TotusSecretKey2026",
+      },
+      {
+          urls: "turn:turn2.totus.club:3478?transport=udp",
+          username: "test",
+          credential: "TotusSecretKey2026",
+      },
+      {
+          urls: "turn:turn2.totus.club:3478?transport=tcp",
+          username: "test",
+          credential: "TotusSecretKey2026",
+      },
+      {
+          urls: "turns:turn2.totus.club:5349?transport=tcp",
+          username: "test",
+          credential: "TotusSecretKey2026",
+      },
   ];
 }
 
